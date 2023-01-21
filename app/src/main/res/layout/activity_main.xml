@@ -81,4 +81,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.9" />
 
+    <Switch
+        android:id="@+id/btn_gyroscope"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="96dp"
+        android:checked="false"
+        android:onClick="onGyroscopePressed"
+        android:text="Gyroscope"
+        app:layout_constraintBottom_toTopOf="@+id/btn_speak"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.9" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -17,7 +19,10 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SPEECH_INPUT = 1;
 
+    private static boolean mIsGyroscopeOn = false;
+
     BluetoothManager mBluetoothManager;
+    private Gyroscope gyroscope;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,11 +30,28 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
 
-
         mBluetoothManager = new BluetoothManager(this);
-        if (mBluetoothManager.activateBluetooth()) {
-            mBluetoothManager.getDevice();
+        gyroscope = new Gyroscope(this);
+
+
+        if (savedInstanceState == null) {
+            if (mBluetoothManager.activateBluetooth()) {
+                mBluetoothManager.getDevice();
+            }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        gyroscope.register();
+    }
+
+    // create on pause method
+    @Override
+    protected void onPause() {
+        super.onPause();
+        gyroscope.unregister();
     }
 
 
@@ -63,6 +85,42 @@ public class MainActivity extends AppCompatActivity {
             mBluetoothManager.sendCharacter('o');
     }
 
+    public void onGyroscopePressed(View view) {
+        Switch button = (Switch) view;
+        mIsGyroscopeOn = button.isChecked();
+        if (mIsGyroscopeOn) {
+            gyroscope.setListener(new Gyroscope.Listener() {
+                // on rotation method of gyroscope
+                @Override
+                public void onRotation(float rx, float ry, float rz) {
+                    if (!mIsGyroscopeOn) return;
+                    // set the color green if the device rotates on positive z axis
+                    if (rz > 1.0f) {
+                        getWindow().getDecorView().setBackgroundColor(Color.rgb(100, 11, 11));
+                        mBluetoothManager.sendCharacter('a');
+                        // Left
+                    } else if (rz < -1.0f) {
+                        getWindow().getDecorView().setBackgroundColor(Color.rgb(11, 11, 100));
+                        mBluetoothManager.sendCharacter('d');
+                        //Right
+                    }
+                    // set the color yellow if the device rotates on positive z axis
+                    if (ry > 1.0f) {
+                        getWindow().getDecorView().setBackgroundColor(Color.rgb(100, 100, 100));
+                        mBluetoothManager.sendCharacter('w');
+                        // Up
+                    } else if (ry < -1.0f) {
+                        getWindow().getDecorView().setBackgroundColor(Color.rgb(20, 20, 20));
+                        mBluetoothManager.sendCharacter('s');
+                        // Down
+                    }
+
+                }
+
+            });
+        }
+    }
+
     public void onSpeakPressed(View view) {
         Toast.makeText(this, "SPK", Toast.LENGTH_SHORT).show();
 
@@ -91,7 +149,15 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_SPEECH_INPUT) {
             if (resultCode == RESULT_OK && data != null) {
                 ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                Toast.makeText(this, result.get(0), Toast.LENGTH_SHORT).show();
+
+                ArrayList<Character> output = Command.processRawInput(result.get(0));
+
+
+                // Send Characters
+                for (Character c : output) {
+                    mBluetoothManager.sendCharacter(c);
+                    Toast.makeText(this, ">" + c, Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
