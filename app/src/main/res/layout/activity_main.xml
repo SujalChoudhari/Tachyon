@@ -7,54 +7,78 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:layout_width="69dp"
-        android:layout_height="173dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginBottom="36dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:layout_marginBottom="60dp"
-            app:srcCompat="@android:drawable/arrow_up_float" />
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:layout_marginBottom="36dp"
-            app:srcCompat="@android:drawable/arrow_down_float" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="187dp"
-        android:layout_height="84dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginBottom="36dp"
+        android:layout_width="243dp"
+        android:layout_height="175dp"
         android:dividerPadding="20dp"
+        android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.942"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.881">
 
-        <ImageView
-            android:id="@+id/imageView4"
-            android:layout_width="64dp"
-            android:layout_height="match_parent"
-            android:layout_marginRight="60dp"
-            android:rotation="-90"
-            app:srcCompat="@android:drawable/arrow_up_float" />
+        <Button
+            android:id="@+id/btn_left"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:onClick="onLeftPressed"
+            android:text="A" />
 
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="64dp"
-            android:layout_height="match_parent"
-            android:rotation="-90"
-            app:srcCompat="@android:drawable/arrow_down_float" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:orientation="vertical">
 
+            <Button
+                android:id="@+id/btn_forward"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="4dp"
+                android:onClick="onForwardPressed"
+                android:text="W" />
+
+            <Button
+                android:id="@+id/btn_stop"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="4dp"
+                android:onClick="onStopPressed"
+                android:text="O" />
+
+            <Button
+                android:id="@+id/btn_reverse"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:onClick="onReversePressed"
+                android:text="S" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_right"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:onClick="onRightPressed"
+            android:text="D" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_speak"
+        android:layout_width="147dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="44dp"
+        android:drawableLeft="@android:drawable/ic_btn_speak_now"
+        android:drawableTint="#FFFFFF"
+        android:onClick="onSpeakPressed"
+        android:text="Speak"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

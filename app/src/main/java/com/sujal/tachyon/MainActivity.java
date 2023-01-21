@@ -1,28 +1,23 @@
 package com.sujal.tachyon;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.speech.RecognizerIntent;
+import android.view.View;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    static final UUID UNIVERSAL_UNIQUE_IDENTIFIER = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private static final int REQUEST_CODE_SPEECH_INPUT = 1;
 
-    private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothSocket mBluetoothSocket;
-    private BluetoothDevice mHC05;
-
-    private int mConnectionTryCount = 1;
+    BluetoothManager mBluetoothManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,50 +25,74 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
 
-        if(savedInstanceState == null){
-            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-            activateBluetooth();
-            getDevice();
-//            connectDevice();
+        mBluetoothManager = new BluetoothManager(this);
+        if (mBluetoothManager.activateBluetooth()) {
+            mBluetoothManager.getDevice();
         }
     }
 
 
-    @SuppressLint("MissingPermission")
-    protected void activateBluetooth() {
-
-        // Check if Bluetooth is available or not
-        if (mBluetoothAdapter == null) {
-            Toast.makeText(this, "Bluetooth Not Supported", Toast.LENGTH_SHORT).show();
-        } else {
-            // if bluetooth is enabled (status on/off)
-            mBluetoothAdapter.enable();
-            if (mBluetoothAdapter.isEnabled()) {
-                Toast.makeText(this, "Bluetooth Activated", Toast.LENGTH_SHORT).show();
-            }
-        }
+    public void onForwardPressed(View view) {
+        Toast.makeText(this, "FOR", Toast.LENGTH_SHORT).show();
+        if (mBluetoothManager != null)
+            mBluetoothManager.sendCharacter('w');
     }
 
-    @SuppressLint("MissingPermission")
-    protected void getDevice() {
-        mHC05 = mBluetoothAdapter.getRemoteDevice("00:22:04:00:E3:E8");
-        Toast.makeText(this, "Device Found (00:22:04:00:E3:E8)", Toast.LENGTH_SHORT).show();
-
+    public void onReversePressed(View view) {
+        Toast.makeText(this, "BCK", Toast.LENGTH_SHORT).show();
+        if (mBluetoothManager != null)
+            mBluetoothManager.sendCharacter('s');
     }
 
-    @SuppressLint("MissingPermission")
-    protected void connectDevice() {
+    public void onLeftPressed(View view) {
+        Toast.makeText(this, "LFT", Toast.LENGTH_SHORT).show();
+        if (mBluetoothManager != null)
+            mBluetoothManager.sendCharacter('a');
+    }
+
+    public void onRightPressed(View view) {
+        Toast.makeText(this, "RGT", Toast.LENGTH_SHORT).show();
+        if (mBluetoothManager != null)
+            mBluetoothManager.sendCharacter('d');
+    }
+
+    public void onStopPressed(View view) {
+        Toast.makeText(this, "STP", Toast.LENGTH_SHORT).show();
+        if (mBluetoothManager != null)
+            mBluetoothManager.sendCharacter('o');
+    }
+
+    public void onSpeakPressed(View view) {
+        Toast.makeText(this, "SPK", Toast.LENGTH_SHORT).show();
+
+        Intent intent
+                = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
+                Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text");
+
         try {
-            mBluetoothSocket = mHC05.createRfcommSocketToServiceRecord(UNIVERSAL_UNIQUE_IDENTIFIER);
-            mBluetoothSocket.connect();
-        } catch (IOException e) {
-            Toast.makeText(this, "Failed connection, retrying 3 times (" + mConnectionTryCount + ")", Toast.LENGTH_LONG).show();
-            mConnectionTryCount++;
+            startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this, " " + e.getMessage(),
+                            Toast.LENGTH_SHORT)
+                    .show();
+        }
+    }
 
-            if (mConnectionTryCount <= 3 && !mBluetoothSocket.isConnected())
-                connectDevice();
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_SPEECH_INPUT) {
+            if (resultCode == RESULT_OK && data != null) {
+                ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                Toast.makeText(this, result.get(0), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
