@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Command {
-    public static final String[] FORWARD = {"go","front","forward","f","start"};
-    public static final String[] REVERSE = {"back","reverse","b","r"};
-    public static final String[] LEFT = {"left","l"};
-    public static final String[] RIGHT = {"right","r"};
+    public static final String[] FORWARD = {"go","front","forward","forwards","f","start"};
+    public static final String[] REVERSE = {"back","reverse","b","r","rivers"};
+    public static final String[] LEFT = {"left","l","let"};
+    public static final String[] RIGHT = {"right","r","write"};
     public static final String[] STOP = {"stop","halt","s"};
 
 

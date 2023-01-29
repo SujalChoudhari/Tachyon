@@ -14,109 +14,129 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+public class ApplicationActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SPEECH_INPUT = 1;
 
     private static boolean mIsGyroscopeOn = false;
 
     BluetoothManager mBluetoothManager;
-    private Gyroscope gyroscope;
+    private Gyroscope mGyroscope;
+    private Accelerometer accelerometer;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_application);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
 
         mBluetoothManager = new BluetoothManager(this);
-        gyroscope = new Gyroscope(this);
+        mGyroscope = new Gyroscope(this);
+        accelerometer = new Accelerometer(this);
 
 
-        if (savedInstanceState == null) {
-            if (mBluetoothManager.activateBluetooth()) {
-                mBluetoothManager.getDevice();
-            }
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        gyroscope.register();
+        mGyroscope.register();
+        accelerometer.register();
     }
 
     // create on pause method
     @Override
     protected void onPause() {
         super.onPause();
-        gyroscope.unregister();
+        mGyroscope.unregister();
+        accelerometer.unregister();
     }
 
 
     public void onForwardPressed(View view) {
-        Toast.makeText(this, "FOR", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "FOR", Toast.LENGTH_SHORT).show();
         if (mBluetoothManager != null)
             mBluetoothManager.sendCharacter('w');
     }
 
     public void onReversePressed(View view) {
-        Toast.makeText(this, "BCK", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "BCK", Toast.LENGTH_SHORT).show();
         if (mBluetoothManager != null)
             mBluetoothManager.sendCharacter('s');
     }
 
     public void onLeftPressed(View view) {
-        Toast.makeText(this, "LFT", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "LFT", Toast.LENGTH_SHORT).show();
         if (mBluetoothManager != null)
             mBluetoothManager.sendCharacter('a');
     }
 
     public void onRightPressed(View view) {
-        Toast.makeText(this, "RGT", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "RGT", Toast.LENGTH_SHORT).show();
         if (mBluetoothManager != null)
             mBluetoothManager.sendCharacter('d');
     }
 
     public void onStopPressed(View view) {
-        Toast.makeText(this, "STP", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "STP", Toast.LENGTH_SHORT).show();
         if (mBluetoothManager != null)
             mBluetoothManager.sendCharacter('o');
     }
+
+    public void onReconnectPressed(View view){
+        if(mBluetoothManager != null){
+            mBluetoothManager.disconnectDevice();
+            mBluetoothManager.connectDevice();
+
+        }
+    }
+
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        mBluetoothManager.disconnectDevice();
+//    }
 
     public void onGyroscopePressed(View view) {
         Switch button = (Switch) view;
         mIsGyroscopeOn = button.isChecked();
         if (mIsGyroscopeOn) {
-            gyroscope.setListener(new Gyroscope.Listener() {
+            mGyroscope.setListener(new Gyroscope.Listener() {
                 // on rotation method of gyroscope
                 @Override
                 public void onRotation(float rx, float ry, float rz) {
                     if (!mIsGyroscopeOn) return;
                     // set the color green if the device rotates on positive z axis
-                    if (rz > 1.0f) {
+                    if (rz > 1.3f) {
                         getWindow().getDecorView().setBackgroundColor(Color.rgb(100, 11, 11));
                         mBluetoothManager.sendCharacter('a');
                         // Left
-                    } else if (rz < -1.0f) {
+                    } else if (rz < -1.3f) {
                         getWindow().getDecorView().setBackgroundColor(Color.rgb(11, 11, 100));
                         mBluetoothManager.sendCharacter('d');
                         //Right
                     }
-                    // set the color yellow if the device rotates on positive z axis
-                    if (ry > 1.0f) {
-                        getWindow().getDecorView().setBackgroundColor(Color.rgb(100, 100, 100));
-                        mBluetoothManager.sendCharacter('w');
-                        // Up
-                    } else if (ry < -1.0f) {
-                        getWindow().getDecorView().setBackgroundColor(Color.rgb(20, 20, 20));
-                        mBluetoothManager.sendCharacter('s');
-                        // Down
-                    }
-
                 }
 
+            });
+
+            accelerometer.setListener(new Accelerometer.Listener() {
+                //on translation method of accelerometer
+                @Override
+                public void onTranslation(float tx, float ty, float ts) {
+                    // set the color red if the device moves in positive x axis
+                    if (ts > 2.0f) {
+                        getWindow().getDecorView().setBackgroundColor(Color.rgb(11,100,11));
+                        mBluetoothManager.sendCharacter('s');
+                    }
+                    // set the color blue if the device moves in negative x axis
+                    else if (ts < -2.0f) {
+                        getWindow().getDecorView().setBackgroundColor(Color.rgb(100,11,100));
+                        mBluetoothManager.sendCharacter('w');
+                    }
+                }
             });
         }
     }
@@ -135,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (Exception e) {
-            Toast.makeText(MainActivity.this, " " + e.getMessage(),
+            Toast.makeText(ApplicationActivity.this, " " + e.getMessage(),
                             Toast.LENGTH_SHORT)
                     .show();
         }

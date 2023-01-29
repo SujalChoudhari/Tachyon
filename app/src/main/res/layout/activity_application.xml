@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ApplicationActivity">
 
     <LinearLayout
         android:layout_width="243dp"
@@ -72,10 +73,12 @@
         android:layout_width="147dp"
         android:layout_height="51dp"
         android:layout_marginStart="44dp"
+        android:backgroundTint="@color/purple_500"
         android:drawableLeft="@android:drawable/ic_btn_speak_now"
         android:drawableTint="#FFFFFF"
         android:onClick="onSpeakPressed"
         android:text="Speak"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -83,16 +86,33 @@
 
     <Switch
         android:id="@+id/btn_gyroscope"
-        android:layout_width="150dp"
-        android:layout_height="48dp"
+        android:layout_width="148dp"
+        android:layout_height="42dp"
         android:layout_marginStart="44dp"
         android:layout_marginTop="96dp"
+        android:background="@color/purple_500"
         android:checked="false"
         android:onClick="onGyroscopePressed"
-        android:text="Gyroscope"
+        android:padding="4dp"
+        android:text="Hands Free"
         app:layout_constraintBottom_toTopOf="@+id/btn_speak"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.9" />
+
+    <Button
+        android:id="@+id/btn_reconnect"
+        android:layout_width="168dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/purple_500"
+        android:drawableLeft="@android:drawable/ic_popup_sync"
+        android:onClick="onReconnectPressed"
+        android:text="Reconnect"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.947"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
