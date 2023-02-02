@@ -57,15 +57,12 @@ public class BluetoothManager {
     @SuppressLint("MissingPermission")
     protected void connectDevice() {
         try {
-            if (!mBluetoothAdapter.isEnabled()) {
-                activateBluetooth();
-            }
             if (mBluetoothSocket == null) {
                 getDevice();
                 mBluetoothSocket = mHC05.createRfcommSocketToServiceRecord(UNIVERSAL_UNIQUE_IDENTIFIER);
-                mBluetoothSocket.connect();
-                mConnectionTryCount = 0;
             }
+            mBluetoothSocket.connect();
+            mConnectionTryCount = 0;
         } catch (IOException e) {
             Toast.makeText(mContext, "Failed connection, Retrying (" + mConnectionTryCount + "/3)", Toast.LENGTH_LONG).show();
             mConnectionTryCount++;

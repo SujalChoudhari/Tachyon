@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Tachyon</string>
+    <string name="txt_dev">SUJAL CHOUDHARI</string>
+    <string name="txt_other">SURAJSINGH RAJPUROHIT\nSHRUSHTI BARI</string>
+    <string name="txt_footer">Made by Team Tachyon (Sujal,Shrushti,Suraj)</string>
 </resources>

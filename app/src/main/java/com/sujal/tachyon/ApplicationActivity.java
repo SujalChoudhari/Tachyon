@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -25,6 +26,9 @@ public class ApplicationActivity extends AppCompatActivity {
     private Accelerometer accelerometer;
 
 
+    private AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.2F);
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,7 @@ public class ApplicationActivity extends AppCompatActivity {
         mGyroscope = new Gyroscope(this);
         accelerometer = new Accelerometer(this);
 
+        mBluetoothManager.activateBluetooth();
 
     }
 
@@ -57,47 +62,58 @@ public class ApplicationActivity extends AppCompatActivity {
 
     public void onForwardPressed(View view) {
 //        Toast.makeText(this, "FOR", Toast.LENGTH_SHORT).show();
+        view.startAnimation(buttonClick);
         if (mBluetoothManager != null)
             mBluetoothManager.sendCharacter('w');
     }
 
     public void onReversePressed(View view) {
 //        Toast.makeText(this, "BCK", Toast.LENGTH_SHORT).show();
+        view.startAnimation(buttonClick);
         if (mBluetoothManager != null)
             mBluetoothManager.sendCharacter('s');
     }
 
     public void onLeftPressed(View view) {
 //        Toast.makeText(this, "LFT", Toast.LENGTH_SHORT).show();
+        view.startAnimation(buttonClick);
         if (mBluetoothManager != null)
             mBluetoothManager.sendCharacter('a');
     }
 
     public void onRightPressed(View view) {
 //        Toast.makeText(this, "RGT", Toast.LENGTH_SHORT).show();
+        view.startAnimation(buttonClick);
         if (mBluetoothManager != null)
             mBluetoothManager.sendCharacter('d');
     }
 
     public void onStopPressed(View view) {
 //        Toast.makeText(this, "STP", Toast.LENGTH_SHORT).show();
+        view.startAnimation(buttonClick);
         if (mBluetoothManager != null)
             mBluetoothManager.sendCharacter('o');
     }
 
-    public void onReconnectPressed(View view){
+    public void onConnectPressed(View view){
         if(mBluetoothManager != null){
-            mBluetoothManager.disconnectDevice();
             mBluetoothManager.connectDevice();
-
         }
+
+        Toast.makeText(this, "Connected!", Toast.LENGTH_SHORT).show();
     }
 
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        mBluetoothManager.disconnectDevice();
-//    }
+    public void onDisconnectPressed(View view){
+        if(mBluetoothManager != null){
+            mBluetoothManager.disconnectDevice();
+        }
+
+        Toast.makeText(this, "Disconnected!", Toast.LENGTH_SHORT).show();
+    }
+
+
+
+
 
     public void onGyroscopePressed(View view) {
         Switch button = (Switch) view;
@@ -142,7 +158,7 @@ public class ApplicationActivity extends AppCompatActivity {
     }
 
     public void onSpeakPressed(View view) {
-        Toast.makeText(this, "SPK", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "SPK", Toast.LENGTH_SHORT).show();
 
         Intent intent
                 = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -176,7 +192,7 @@ public class ApplicationActivity extends AppCompatActivity {
                 // Send Characters
                 for (Character c : output) {
                     mBluetoothManager.sendCharacter(c);
-                    Toast.makeText(this, ">" + c, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this,c, Toast.LENGTH_SHORT).show();
                 }
             }
         }
